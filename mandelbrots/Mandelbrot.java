@@ -5,15 +5,109 @@
  */
 package mandelbrots;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.MemoryImageSource;
+import java.util.Stack;
+
 /**
  *
  * @author mbaltais3
  */
 public class Mandelbrot extends javax.swing.JFrame {
+    int augst, plat;
+    double Ano,Alidz,Bno,Blidz, gradient;
+    int pressedX1,pressedX2,pressedY1,pressedY2,pressedX3,pressedY3;
+    boolean zimejums = false;
+    Stack<Double> steks = new Stack<Double>(); 
+    double Anoj, Alidzj, Bnoj, Blidzj;
+    
+    public void zimesana(double Ano, double Alidz, double Bno, double Blidz){
+    
+    augst = Panel.getHeight();
+    plat = Panel.getWidth();
+    
+    
+    double cReal, aVecais, cImag, bVecais, a, b, aJaunais, bJaunais, zMod;
 
-    /**
-     * Creates new form Mandelbrot
-     */
+    double db = (Blidz - Bno)/augst;
+    double da = (Alidz - Ano)/plat;
+    int pixels[] = new int[plat*augst];
+    
+    
+    Image image;
+   
+    Graphics g=Panel.getGraphics();
+    
+    int m = 10;
+    int j=0;
+    for(int y =0; y < augst; y++){
+        b = Bno + y*db;
+        for (int x = 0; x < plat; x++){
+            a = Ano + x*da;
+            
+            cReal = a;
+            aVecais = a;
+            cImag = b;
+            bVecais = b;
+            
+            int i = 0;
+            
+            do{
+            aJaunais =  (aVecais*aVecais)-(bVecais*bVecais)+cReal;  
+            bJaunais = 2*aVecais*bVecais + cImag;
+            zMod = (aJaunais*aJaunais) + (bJaunais*bJaunais);
+            aVecais = aJaunais;
+            bVecais = bJaunais;
+            i = i+1;
+            } while (i < 100 && zMod <= m);
+            
+                gradient = i + 1.0 - Math.log(Math.log(Math.abs(zMod)))/Math.log(2.0);
+               gradient = gradient/100;
+            
+            if (i >= 100){
+                  pixels[j] = (255<<24)|(0<<16)|(255<<8) | 0;
+                } else {
+                
+               pixels[j] = Color.HSBtoRGB((float) (0.95f +2 * gradient),0.60f,1.0f);
+//              pixels[j] = (255<<24)|(256<<16)|(0<<8)|0; 
+              
+            }
+            j++;
+            
+            }
+            
+        }
+        image = createImage(new MemoryImageSource(plat,augst,pixels,0,plat));
+        g.drawImage(image,0,0,null);
+    }
+    
+        public void zoom(){
+        steks.push(Ano);
+        steks.push(Bno);
+        steks.push(Alidz);
+        steks.push(Blidz);
+ 
+        Anoj = Ano + (pressedX1*((Alidz-Ano)/plat));
+        Alidzj = Ano + (pressedX2*((Alidz-Ano)/plat));
+        Bnoj = Blidz - (pressedY2*((Blidz-Bno)/augst));
+        Blidzj = Blidz - (pressedY1*((Blidz-Bno)/augst));
+        
+        Ano = Anoj;
+        Bno = Anoj;
+        Alidz = Alidzj;
+        Blidz = Blidzj;
+        
+        zimesana(Ano,Bno,Alidz,Blidz);
+//        
+//        System.out.println("X1: "+pressedX1+ " X2: "+pressedX2);
+//        System.out.println("Y1: "+pressedY1+ " Y2: "+pressedY2);
+//        System.out.println("ano: "+aNo + " alidz: " + aLidz + " bno: "+bNoj + " blidz: "+bLidzj + " ");
+    }
+    
+    
+    
     public Mandelbrot() {
         initComponents();
     }
@@ -27,27 +121,36 @@ public class Mandelbrot extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        Panel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        Ano = new javax.swing.JTextField();
-        Bno = new javax.swing.JTextField();
-        Blidz = new javax.swing.JTextField();
-        Alidz = new javax.swing.JTextField();
+        Ano_text = new javax.swing.JTextField();
+        Bno_text = new javax.swing.JTextField();
+        Blidz_text = new javax.swing.JTextField();
+        Alidz_text = new javax.swing.JTextField();
         poga = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        Panel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                PanelMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                PanelMouseReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout PanelLayout = new javax.swing.GroupLayout(Panel);
+        Panel.setLayout(PanelLayout);
+        PanelLayout.setHorizontalGroup(
+            PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 419, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        PanelLayout.setVerticalGroup(
+            PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 400, Short.MAX_VALUE)
         );
 
@@ -59,31 +162,45 @@ public class Mandelbrot extends javax.swing.JFrame {
 
         jLabel4.setText("Līdz");
 
-        Ano.addActionListener(new java.awt.event.ActionListener() {
+        Ano_text.setText("-2");
+        Ano_text.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AnoActionPerformed(evt);
+                Ano_textActionPerformed(evt);
             }
         });
 
-        Bno.addActionListener(new java.awt.event.ActionListener() {
+        Bno_text.setText("-2");
+        Bno_text.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BnoActionPerformed(evt);
+                Bno_textActionPerformed(evt);
             }
         });
 
-        Blidz.addActionListener(new java.awt.event.ActionListener() {
+        Blidz_text.setText("2");
+        Blidz_text.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BlidzActionPerformed(evt);
+                Blidz_textActionPerformed(evt);
             }
         });
 
-        Alidz.addActionListener(new java.awt.event.ActionListener() {
+        Alidz_text.setText("2");
+        Alidz_text.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AlidzActionPerformed(evt);
+                Alidz_textActionPerformed(evt);
             }
         });
 
         poga.setText("Izveido!");
+        poga.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pogaMouseClicked(evt);
+            }
+        });
+        poga.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pogaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -93,29 +210,33 @@ public class Mandelbrot extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(85, 85, 85)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(53, 53, 53)
-                                .addComponent(jLabel2))
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel1)
+                        .addGap(53, 53, 53)
+                        .addComponent(jLabel2)
+                        .addGap(334, 334, 334))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(Alidz_text, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(27, 27, 27)
+                                        .addComponent(Ano_text, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(Bno_text, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(Blidz_text, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(Alidz, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(poga, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(27, 27, 27)
-                                .addComponent(Ano, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(Bno, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Blidz, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(poga, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(40, 40, 40)
+                                .addComponent(Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap(115, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -128,37 +249,66 @@ public class Mandelbrot extends javax.swing.JFrame {
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(Ano, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Bno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Ano_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Bno_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(poga, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(Blidz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Alidz, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Blidz_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Alidz_text, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(55, 55, 55))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void AnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AnoActionPerformed
+    private void Ano_textActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Ano_textActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_AnoActionPerformed
+    }//GEN-LAST:event_Ano_textActionPerformed
 
-    private void BnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BnoActionPerformed
+    private void Bno_textActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Bno_textActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_BnoActionPerformed
+    }//GEN-LAST:event_Bno_textActionPerformed
 
-    private void BlidzActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BlidzActionPerformed
+    private void Blidz_textActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Blidz_textActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_BlidzActionPerformed
+    }//GEN-LAST:event_Blidz_textActionPerformed
 
-    private void AlidzActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AlidzActionPerformed
+    private void Alidz_textActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Alidz_textActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_AlidzActionPerformed
+    }//GEN-LAST:event_Alidz_textActionPerformed
+
+    private void pogaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pogaMouseClicked
+    Ano = Double.parseDouble(Ano_text.getText());
+    Bno = Double.parseDouble(Bno_text.getText());
+    Alidz = Double.parseDouble(Alidz_text.getText());
+    Blidz = Double.parseDouble(Blidz_text.getText());
+    zimesana(Ano,Alidz,Bno,Blidz);
+    zimejums = true;
+    }//GEN-LAST:event_pogaMouseClicked
+
+    private void pogaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pogaActionPerformed
+
+    }//GEN-LAST:event_pogaActionPerformed
+
+    private void PanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PanelMousePressed
+        pressedX1 = 0;
+        pressedX2 = 0;
+        pressedY1= 0;
+        pressedY2= 0;
+        pressedX1 = evt.getX();
+        pressedY1 = evt.getY();
+    }//GEN-LAST:event_PanelMousePressed
+
+    private void PanelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PanelMouseReleased
+         pressedX2 = evt.getX();
+        pressedY2 = pressedY1 + pressedX2 - pressedX1;
+            if (zimejums == true) {
+                zoom(); 
+    }//GEN-LAST:event_PanelMouseReleased
 
     /**
      * @param args the command line arguments
@@ -196,15 +346,15 @@ public class Mandelbrot extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Alidz;
-    private javax.swing.JTextField Ano;
-    private javax.swing.JTextField Blidz;
-    private javax.swing.JTextField Bno;
+    private javax.swing.JTextField Alidz_text;
+    private javax.swing.JTextField Ano_text;
+    private javax.swing.JTextField Blidz_text;
+    private javax.swing.JTextField Bno_text;
+    private javax.swing.JPanel Panel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JButton poga;
     // End of variables declaration//GEN-END:variables
 }
